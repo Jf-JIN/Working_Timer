@@ -20,8 +20,11 @@ The software is a temporary implementation, so the structure may not be very goo
 6. 如果有程序崩溃的情况，如果可以的话，请将动作/情况/场景告诉我，我将尽快修改bug。
 
 
+## 下载链接
 
 下载链接：https://github.com/Jf-JIN/Working_Timer/releases/tag/Timer
+
+## 示例图
 
 ![main](https://github.com/user-attachments/assets/e609a8d9-468f-45d7-828d-08d07ebec77d)
 
