@@ -27,8 +27,8 @@ class DialogManual(QDialog, Ui_Dialog):
         self.init_signal_connections()
 
     def accept(self):
-        if self.dte_start.dateTime() >= self.dte_end.dateTime() or self.plainTextEdit.toPlainText() == '':
-            QMessageBox.information(None, '提示', '开始时间不能晚于结束时间, 且工作内容不能为空')
+        if self.dte_start.dateTime() >= self.dte_end.dateTime() or self.plainTextEdit.toPlainText() == '' or self.comboBox.currentText() == '':
+            QMessageBox.information(None, '提示', '开始时间不能晚于结束时间, 且工作内容和分类不能为空')
             return
         super().accept()
         self.record_in_data()
