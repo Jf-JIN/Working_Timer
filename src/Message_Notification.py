@@ -147,6 +147,7 @@ class MessageNotification(QWidget):
         self.setWindowOpacity(0)  # 透明度
         self.__label = QLabel('', self)
         self.__label.setStyleSheet(self.__style_sheet)
+        self.__label.setAlignment(Qt.AlignCenter)
         layout = QVBoxLayout(self)
         layout.addWidget(self.__label)
         layout.setContentsMargins(0, 0, 0, 0)

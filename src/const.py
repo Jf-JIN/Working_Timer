@@ -151,3 +151,48 @@ ADD_ICON = """
   </g>
 </svg>
 """
+DELETE_ICON = """<svg
+   width="499.33948"
+   height="748.42981"
+   viewBox="0 0 132.1169 198.02206"
+   version="1.1"
+   id="svg1"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs1" />
+  <g
+     id="layer1"
+     transform="translate(-34.925321,-3.9411046)">
+    <path
+       id="rect4-0"
+       style="fill:#131842;fill-opacity:0.988235;stroke:#131842;stroke-width:4.99999;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:0;stroke-opacity:1;paint-order:fill markers stroke"
+       d="m 68.100304,19.410271 4.234391,-1.134602 -2.575074,29.43323 -4.234391,1.134601 z m 44.168356,-11.8346081 4.23438,-1.1346 16.9467,24.2023881 -4.23439,1.134601 z M 68.331658,19.348545 116.32142,6.4897279 117.64513,11.429848 69.655359,24.288667 Z M 37.425256,53.703255 162.73458,20.126723 164.54227,26.8731 39.232942,60.449631 Z" />
+    <path
+       id="rect1"
+       style="fill:#131842;fill-opacity:0.988235;stroke:#131842;stroke-width:6.21249;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:0;stroke-opacity:1;paint-order:fill markers stroke"
+       d="M 45.608681,66.45785 V 198.85691 H 163.17425 V 66.45785 Z M 57.365115,77.491011 H 151.41782 V 187.82375 H 57.365115 Z" />
+    <rect
+       style="fill:#131842;fill-opacity:0.988235;stroke:#131842;stroke-width:5.49944;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:0;stroke-opacity:1;paint-order:fill markers stroke"
+       id="rect2"
+       width="10"
+       height="82.402733"
+       x="75.150322"
+       y="89.649681" />
+    <rect
+       style="fill:#131842;fill-opacity:0.988235;stroke:#131842;stroke-width:5.49944;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:0;stroke-opacity:1;paint-order:fill markers stroke"
+       id="rect2-1"
+       width="10"
+       height="82.402733"
+       x="100.15032"
+       y="89.649681" />
+    <rect
+       style="fill:#131842;fill-opacity:0.988235;stroke:#131842;stroke-width:5.49944;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:0;stroke-opacity:1;paint-order:fill markers stroke"
+       id="rect2-6"
+       width="10"
+       height="82.402733"
+       x="125.15032"
+       y="89.649681" />
+  </g>
+</svg>
+"""

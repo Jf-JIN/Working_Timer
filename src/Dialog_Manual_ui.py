@@ -84,6 +84,7 @@ class Ui_Dialog(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.comboBox.sizePolicy().hasHeightForWidth())
         self.comboBox.setSizePolicy(sizePolicy)
+        self.comboBox.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.comboBox.setObjectName("comboBox")
         self.horizontalLayout_3.addWidget(self.comboBox)
         self.verticalLayout.addWidget(self.widget_5)
@@ -194,6 +195,7 @@ class Ui_Dialog(object):
         font.setBold(False)
         font.setWeight(50)
         self.plainTextEdit.setFont(font)
+        self.plainTextEdit.viewport().setProperty("cursor", QtGui.QCursor(QtCore.Qt.IBeamCursor))
         self.plainTextEdit.setPlainText("")
         self.plainTextEdit.setObjectName("plainTextEdit")
         self.verticalLayout_2.addWidget(self.plainTextEdit)
@@ -217,5 +219,6 @@ class Ui_Dialog(object):
     def retranslateUi(self, Dialog):
         _translate = QtCore.QCoreApplication.translate
         Dialog.setWindowTitle(_translate("Dialog", "Dialog"))
+        self.comboBox.setWhatsThis(_translate("Dialog", "<html><head/><body><p>这是一个标签/分类显示菜单</p></body></html>"))
         self.label.setText(_translate("Dialog", "开始时间:"))
         self.label_2.setText(_translate("Dialog", "结束时间:"))
