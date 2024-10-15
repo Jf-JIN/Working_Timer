@@ -24,6 +24,19 @@ The software is a temporary implementation, so the structure may not be very goo
 
 下载链接：https://github.com/Jf-JIN/Working_Timer/releases/tag/Timer
 
+
+## 版本信息
+### v1.1
+* 修复了手动添加中，输入项目后，变更或添加新分类时，原有数据不能保存，且关闭手动添加对话框后，软件崩溃的问题。
+* 修复了初始化手动添加中开始与结束时间相同问题
+* 修复了手动添加中分类名重复不提醒的问题
+* 增加了手动添加点击关闭时，询问数据是否保存的功能
+* 增加了手动添加中保存部分数据的功能
+* 增加了主界面部分提示使用
+* 增加了年计时的功能
+* 修复了导出空白excel的问题
+* 修复了导出时仍有计时器计时时，程序会崩溃的问题
+
 ## 示例图
 
 ![main](https://github.com/user-attachments/assets/e609a8d9-468f-45d7-828d-08d07ebec77d)
