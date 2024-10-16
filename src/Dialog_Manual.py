@@ -35,7 +35,7 @@ class DialogManual(QDialog, Ui_Dialog):
     def accept(self):
         list_incomplete_item = []
         for key, item in self.inner_data.items():
-            if len(item) != 7:
+            if len(item) != 8:
                 list_incomplete_item.append(key)
         if len(list_incomplete_item) > 0:
             ans = QMessageBox.question(None, '提示', ('数据不完整<br>'

@@ -3,6 +3,7 @@
 from PyQt5.QtWidgets import QApplication, QMainWindow,  QTreeWidgetItem, QMessageBox, QInputDialog
 from PyQt5.QtCore import QTimer, QModelIndex
 from PyQt5.QtGui import QColor
+from pyautogui import PRIMARY
 
 from Main_Window_ui import *
 from Dialog_Manual import *
@@ -17,7 +18,6 @@ from inspect import getmembers, isfunction
 from time import localtime, strftime, time
 from copy import deepcopy
 from xlsxwriter import Workbook
-
 
 APP_FOLDER_PATH = os.getcwd()
 # APP_FOLDER_PATH = os.path.dirname(os.path.abspath(__file__))
@@ -51,7 +51,7 @@ class ExcelExportor(object):
         self.dict_color = {'header': self.workbook.add_format({'bg_color': '#5983b0', 'border': 1, 'font_name': 'Arial', 'font_size': 12}),
                            **{i: self.workbook.add_format({'bg_color': i, 'border': 1, 'font_name': 'Arial', 'font_size': 12})for i in COLOR_EXCEL_LIST}}
 
-    def __format__yeartime(self, year_num, time_str):
+    def __format_yeartime(self, year_num, time_str):
         date_str, time_str = time_str.split(' | ')
         date_int = int(date_str.split('D')[0])
         days_in_a_year = 365
@@ -85,7 +85,7 @@ class ExcelExportor(object):
                 worksheet.write(row, 3, self.__format_time(value['work_time'][0]), self.dict_color[value['color_month']])
                 worksheet.write(row, 4, self.__format_time(value['sum_work_time_week'][0]), self.dict_color[value['color_week']])
                 worksheet.write(row, 5, self.__format_time(value['sum_work_time_month'][0]), self.dict_color[value['color_month']])
-                worksheet.write(row, 6, self.__format__yeartime(value['year'], value['sum_work_time_year'][0]), self.dict_color[value['color_year']])
+                worksheet.write(row, 6, self.__format_yeartime(value['year'], value['sum_work_time_year'][0]), self.dict_color[value['color_year']])
             else:
                 worksheet.write(row, 2, '', self.dict_color[value['color_month']])
                 worksheet.write(row, 3, '', self.dict_color[value['color_month']])
@@ -260,7 +260,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         if self.dialog_manual_add.exec_() == QDialog.Accepted:
             dict_time = self.dialog_manual_add.get_data()
             for key, value in dict_time.items():
-                if len(value) != 7:
+                if len(value) != 8:
                     continue
                 self.record_start_time(
                     ccb_item_name=key,
@@ -618,6 +618,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             return
         if index == '0' or len(self.data[ccb_item_name]['data']) == 1 or self.data[ccb_item_name]['data'][str(int(index)-1)][time_circle] != self.data[ccb_item_name]['data'][index][time_circle]:
             self.data[ccb_item_name]['data'][index][dict_label] = self.data[ccb_item_name]['data'][index]['work_time']
+            if time_circle == 'year':
+                sum_seconds = self.data[ccb_item_name]['data'][index]['work_time'][1]
+                self.data[ccb_item_name]['data'][index][dict_label] = [f'{sum_seconds//(3600*24)}D | {sum_seconds//3600}h {sum_seconds%3600//60}min {sum_seconds%3600%60%60}s', sum_seconds]
             return
         last_total_time = self.data[ccb_item_name]['data'][str(int(index)-1)][dict_label][1]
         sum_seconds = self.data[ccb_item_name]['data'][index]['work_time'][1] + last_total_time
@@ -671,9 +674,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def delete_treewidget_item(self, index: QModelIndex):
         item_row = index.row() + 1
-        ans = QMessageBox.question(None, '删除', f'确定要删除 第{item_row}行数据 吗？', QMessageBox.Yes | QMessageBox.No)
+        ans = QMessageBox.question(None, '删除', f'确定要删除 第{item_row}行 数据 吗？', QMessageBox.Yes | QMessageBox.No)
         if ans == QMessageBox.Yes:
-            ans2 = QMessageBox.question(None, '删除', f'删除后数据不可撤回, 确认要删除 第{item_row}行数据 吗？', QMessageBox.Yes | QMessageBox.No)
+            ans2 = QMessageBox.question(None, '删除', f'删除后数据不可撤回, 确认要删除 第{item_row}行 数据 吗？', QMessageBox.Yes | QMessageBox.No)
             if ans2 == QMessageBox.Yes:
                 item_name = self.treeWidget.currentItem().text(0)
                 del self.data[self.comboBox.currentText()]['data'][item_name]
