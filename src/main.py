@@ -3,7 +3,6 @@
 from PyQt5.QtWidgets import QApplication, QMainWindow,  QTreeWidgetItem, QMessageBox, QInputDialog
 from PyQt5.QtCore import QTimer, QModelIndex
 from PyQt5.QtGui import QColor
-from pyautogui import PRIMARY
 
 from Main_Window_ui import *
 from Dialog_Manual import *
@@ -41,14 +40,16 @@ class ExcelExportor(object):
             worksheet.set_column(2, 3, 30)
             worksheet.set_column(3, 5, 15)
             worksheet.set_column(6, 6, 25)
+            worksheet.set_column(7, 7, 100)
             worksheet.write_row(0, 0, HEADER, self.dict_color['header'])
+            worksheet.write(0, len(HEADER), '内容/备注', self.dict_color['header'])
             self.__write_single_sheet(item, worksheet=worksheet)
         self.workbook.close()
 
     def __init__(self, excel_path):
         super().__init__()
         self.workbook = Workbook(excel_path)
-        self.dict_color = {'header': self.workbook.add_format({'bg_color': '#5983b0', 'border': 1, 'font_name': 'Arial', 'font_size': 12}),
+        self.dict_color = {'header': self.workbook.add_format({'bg_color': '#5983b0', 'border': 1, 'font_name': 'Arial', 'font_size': 12, 'align': 'center', 'text_wrap': True}),
                            **{i: self.workbook.add_format({'bg_color': i, 'border': 1, 'font_name': 'Arial', 'font_size': 12})for i in COLOR_EXCEL_LIST}}
 
     def __format_yeartime(self, year_num, time_str):
@@ -80,6 +81,7 @@ class ExcelExportor(object):
             row = int(index_str)
             worksheet.write(row, 0, index_str, self.dict_color[value['color_month']])
             worksheet.write(row, 1, self.__format_datetime(value['start_time'][0]), self.dict_color[value['color_month']])
+            worksheet.write(row, 7, value['content'], self.dict_color[value['color_month']])
             if 'end_time' in value:
                 worksheet.write(row, 2, self.__format_datetime(value['end_time'][0]), self.dict_color[value['color_month']])
                 worksheet.write(row, 3, self.__format_time(value['work_time'][0]), self.dict_color[value['color_month']])
@@ -170,7 +172,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.treeWidget.setColumnWidth(0, 50)
         self.treeWidget.setColumnWidth(1, 170)
         self.treeWidget.setColumnWidth(2, 170)
-        self.plainTextEdit.setPlaceholderText('请在此输入工作内容')
+        self.plainTextEdit.setPlaceholderText('请在此输入工作内容\n\n内容将显示在鼠标悬停于右边项目上时的提示框中')
         self.plainTextEdit.setStyleSheet("""
                                          font: 20px "幼圆";
                                          padding: 10px;
@@ -790,8 +792,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             return
         self.excel_exporter = ExcelExportor(excel_path)
         self.excel_exporter.write_excel_file(self.data)
-        path_format = excel_path.replace('\\', '  /  ')
-        self.message_notification.notification(f'已完成导出, 文件位置: {path_format}')
+        self.message_notification.notification('已完成导出, 文件位置', excel_path)
 
 
 if __name__ == '__main__':

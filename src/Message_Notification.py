@@ -1,6 +1,8 @@
 
 from PyQt5.QtCore import Qt, QPropertyAnimation, QTimer, QParallelAnimationGroup, QPoint
 from PyQt5.QtWidgets import QLabel, QWidget, QVBoxLayout
+from os.path import exists
+from subprocess import Popen, CREATE_NO_WINDOW
 
 
 class MessageNotification(QWidget):
@@ -45,7 +47,7 @@ class MessageNotification(QWidget):
                 border_width=None, border_style=None, border_color=None, border_radius=None, font_color=None, font_family=None, font_size_px=None, font_weight=None, font_italic=None): 设置样式属性并更新样式表
     """
 
-    def notification(self, message: str) -> None:
+    def notification(self, message: str, open_file_path: str = None) -> None:
         """
         显示提示框并开始淡入动画
 
@@ -53,6 +55,14 @@ class MessageNotification(QWidget):
             - message (str): 要显示的提示信息
         """
         self.__label.setText(message)
+        if open_file_path:
+            self.__label.setCursor(Qt.PointingHandCursor)
+            self.__label.mousePressEvent = lambda event: self.__open_excel_folder(open_file_path) if event.button() == Qt.LeftButton else None
+            path_format = open_file_path.replace('\\', '  /  ')
+            self.__label.setText(f"{message}: <b><u>{path_format}</u></b>")
+        else:
+            self.__label.setCursor(Qt.ArrowCursor)
+            self.__label.mousePressEvent = None
         self.__set_position()  # 设置提示框位置
         self.show()
         self.__animation_group_in.start()
@@ -389,6 +399,11 @@ class MessageNotification(QWidget):
         else:
             start_value = base
         return start_value
+
+    def __open_excel_folder(self, file_path: str):
+        if not file_path or not exists(file_path):
+            return
+        Popen(['explorer', '/select,', file_path], creationflags=CREATE_NO_WINDOW)
 
 
 if __name__ == "__main__":

@@ -39,10 +39,11 @@ class DialogManual(QDialog, Ui_Dialog):
                 list_incomplete_item.append(key)
         if len(list_incomplete_item) > 0:
             ans = QMessageBox.question(None, '提示', ('数据不完整<br>'
-                                                    f""""{' '.join(list_incomplete_item)}" 项未填写工作内容<br>"""
+                                                    f""""{'" "'.join(list_incomplete_item)}" 项未填写工作内容<br>"""
                                                     '不完整部分将不会被保存, 是否继续?<br><br>'
                                                     '点击 Yes 将保存数据<br>'
-                                                    '点击 No 将放弃保存'), QMessageBox.Yes | QMessageBox.No)
+                                                    '点击 No 将放弃保存<br><br>'
+                                                    '如需新建分类, 请在主界面进行新建'), QMessageBox.Yes | QMessageBox.No)
             if ans == QMessageBox.No:
                 return
         if self.inner_data == {}:
@@ -57,10 +58,10 @@ class DialogManual(QDialog, Ui_Dialog):
 
     def closeEvent(self, a0: QCloseEvent) -> None:
         if self.inner_data != {}:
-            ans = QMessageBox.question(None, '提示', ('关闭将清空输入的所有内容, 确定关闭吗?<br>'
+            ans = QMessageBox.question(None, '提示', ('关闭将清空输入的所有内容, 确定关闭吗?<br><br>'
                                                     '点击 close 将关闭窗口并清空包括之前输入的内容<br>'
                                                     '点击 save 将只保存之前输入的内容<br>'
-                                                    '点击 No 可以继续编辑<br>'
+                                                    '点击 No 可以继续编辑<br><br>'
                                                     '如果输入有误需要删除, 建议在主界面中手动删除'), QMessageBox.Close | QMessageBox.Save | QMessageBox.No)
             if ans == QMessageBox.Close:
                 self.inner_data = {}
