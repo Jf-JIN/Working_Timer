@@ -123,7 +123,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.treeWidget.installEventFilter(self)
 
     def init_ui(self) -> None:
-        # self.setWindowIcon(self.icon_setup_from_svg(ICON_WIN))
         self.setWindowTitle('Working Timer')
         if DETAIL_DATE_TIME:
             self.setWindowTitle(f'Working Timer\t {APP_FOLDER_PATH}')
@@ -289,8 +288,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.dialog_manual_add = DialogManual(self)
         if self.dialog_manual_add.exec_() == QDialog.Accepted:
             dict_time = self.dialog_manual_add.get_data()
+            list_invalid_item = []
             for key, value in dict_time.items():
                 if len(value) != 8:
+                    list_invalid_item.append(key)
                     continue
                 self.record_start_time(
                     ccb_item_name=key,
@@ -306,6 +307,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                     start_timestamp=value['start_timestamp'],
                     end_time=value['end_time'],
                     end_timestamp=value['end_timestamp'])
+            if len(list_invalid_item) > 0:
+                text = '" "'.join(list_invalid_item)
+                self.message_notification.notification(f'以下分类信息不完整, 未能记录\n\n"{text}"')
             self.write_data()
             self.display_data()
 

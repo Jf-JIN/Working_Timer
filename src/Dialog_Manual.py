@@ -18,8 +18,8 @@ DATA_PART_DEFAULT = {
 DATA_INNER_DEFAULT = {
     'start_time': ''
 }
-DETAIL_DATE_TIME = True
-# DETAIL_DATE_TIME = False
+# DETAIL_DATE_TIME = True
+DETAIL_DATE_TIME = False
 
 
 class DialogManual(QDialog, Ui_Dialog):
@@ -50,8 +50,6 @@ class DialogManual(QDialog, Ui_Dialog):
                 return
         if self.inner_data == {}:
             self.parent().message_notification.notification('尚未输入有效内容')
-            # QMessageBox.information(None, '提示', '尚未输入有效内容<br>开始时间不能晚于结束时间, 且工作内容和分类不能为空')
-            # return
         super().accept()
         self.record_in_data()
 
@@ -91,7 +89,6 @@ class DialogManual(QDialog, Ui_Dialog):
 
     def init_ui(self):
         self.setWindowTitle('手动添加工作时间记录')
-        # self.setWindowIcon(self.icon_setup_from_svg(ICON_WIN))
         self.comboBox.view().setContextMenuPolicy(Qt.CustomContextMenu)
         self.comboBox.view().viewport().installEventFilter(self)
         self.comboBox.view().customContextMenuRequested.connect(self.show_context_menu)
