@@ -1,4 +1,4 @@
-WIN_ICON = """<svg
+ICON_WIN = """<svg
    width="628.51654"
    height="739.65863"
    viewBox="0 0 166.295 195.70135"
@@ -130,7 +130,7 @@ WIN_ICON = """<svg
 </svg>
 """
 
-ADD_ICON = """
+ICON_ADD = """
 <svg
    width="771.02234"
    height="771.02429"
@@ -151,7 +151,7 @@ ADD_ICON = """
   </g>
 </svg>
 """
-DELETE_ICON = """<svg
+ICON_DELETE = """<svg
    width="499.33948"
    height="748.42981"
    viewBox="0 0 132.1169 198.02206"
@@ -193,6 +193,87 @@ DELETE_ICON = """<svg
        height="82.402733"
        x="125.15032"
        y="89.649681" />
+  </g>
+</svg>
+"""
+
+ICON_UPDATE = """
+<svg
+   width="662.38281"
+   height="616.47168"
+   viewBox="0 0 175.25545 163.10813"
+   version="1.1"
+   id="svg1"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs1" />
+  <g
+     id="layer1"
+     transform="translate(-15.163666,-15.412217)">
+    <path
+       id="path1"
+       style="fill:#000000;fill-opacity:1;stroke-width:1.81333;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:0;paint-order:fill markers stroke"
+       d="M 171.59211,55.883011 A 81.600007,81.600007 0 0 0 136.05908,23.121299 81.600007,81.600007 0 0 0 31.078087,55.681937 l 16.449772,7.755313 a 63.466672,63.466672 0 0 1 80.798361,-23.91402 63.466672,63.466672 0 0 1 26.55306,23.986336 z m 0.36573,81.753269 -16.61,-7.83103 A 63.466672,63.466672 0 0 1 74.197105,154.33636 63.466672,63.466672 0 0 1 47.965901,130.83301 l -16.790835,7.66215 A 81.600007,81.600007 0 0 0 66.464254,170.7383 81.600007,81.600007 0 0 0 171.95784,137.63628 Z" />
+    <path
+       style="fill:#000000;fill-opacity:1;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:0;paint-order:fill markers stroke"
+       id="path4-8"
+       d="m 269.23057,39.780626 -54.89406,0 a 6.1102902,6.1102902 60 0 1 -5.29166,-9.165435 l 27.44702,-47.539645 a 6.1102902,6.1102902 2.5219892e-7 0 1 10.58334,0 l 27.44702,47.539645 a 6.1102902,6.1102902 120 0 1 -5.29166,9.165435 z"
+       transform="rotate(97.195843,93.44275,-16.877178)" />
+    <path
+       style="fill:#000000;fill-opacity:1;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:0;paint-order:fill markers stroke"
+       id="path4-8-1"
+       d="m 269.23057,39.780626 -54.89406,0 a 6.1102902,6.1102902 60 0 1 -5.29166,-9.165435 l 27.44702,-47.539645 a 6.1102902,6.1102902 2.5219892e-7 0 1 10.58334,0 l 27.44702,47.539645 a 6.1102902,6.1102902 120 0 1 -5.29166,9.165435 z"
+       transform="rotate(157.19584,198.0796,36.806255)" />
+  </g>
+</svg>
+"""
+ICON_COPY = """<svg
+   width="679.43103"
+   height="743.83789"
+   viewBox="0 0 179.76612 196.80711"
+   version="1.1"
+   id="svg1"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs1" />
+  <g
+     id="layer1"
+     transform="translate(-14.069933,-6.7517628)">
+    <path
+       id="rect3"
+       style="fill:#000000;fill-opacity:1;stroke-width:2.42424;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:0;paint-order:fill markers stroke"
+       d="M 73.116819,6.7517627 A 2.6458333,2.6458333 0 0 0 70.470986,9.3975956 V 49.079929 h 18.18132 V 27.578916 a 2.6458333,2.6458333 0 0 1 2.64583,-2.645834 h 47.489614 a 6.0356894,6.0356894 0 0 1 4.43849,1.945618 l 30.6343,33.247066 a 6.7760581,6.7760581 0 0 1 1.79266,4.591451 v 76.195873 a 2.6458333,2.6458333 0 0 1 -2.64583,2.64583 h -39.97482 v 18.18235 h 58.15769 a 2.6458333,2.6458333 0 0 0 2.64583,-2.64583 V 57.919699 a 6.3875482,6.3875482 0 0 0 -1.8712,-4.51652 L 147.18414,8.6224496 a 6.3876651,6.3876651 0 0 0 -4.51652,-1.8706869 z" />
+    <path
+       id="rect3-4"
+       style="fill:#000000;fill-opacity:1;stroke-width:2.42424;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:0;paint-order:fill markers stroke"
+       d="M 81.836676,12.239124 V 161.93671 a 2.6458333,2.6458333 45 0 0 2.645833,2.64583 H 202.556 a 2.6458333,2.6458333 135 0 0 2.64583,-2.64583 l 0,-101.175594 a 6.3875482,6.3875482 67.499815 0 0 -1.8709,-4.516708 L 158.55011,11.464166 A 6.3876651,6.3876651 22.499815 0 0 154.03338,9.5932911 H 84.482509 A 2.6458333,2.6458333 135 0 0 81.836676,12.239124 Z M 102.66386,27.77463 h 47.48971 a 6.0356894,6.0356894 23.67095 0 1 4.43871,1.945773 l 30.63408,33.246595 a 6.7760581,6.7760581 68.67095 0 1 1.79288,4.591606 l 0,76.196146 a 2.6458333,2.6458333 135 0 1 -2.64583,2.64583 h -81.70955 a 2.6458333,2.6458333 45 0 1 -2.64583,-2.64583 V 30.420463 a 2.6458333,2.6458333 135 0 1 2.64583,-2.645833 z"
+       transform="translate(-67.766743,38.976339)" />
+    <rect
+       style="fill:#000000;fill-opacity:1;stroke-width:2.8843;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:0;paint-order:fill markers stroke"
+       id="rect4"
+       width="63.287361"
+       height="14.207367"
+       x="40"
+       y="90"
+       ry="5.2704749" />
+    <rect
+       style="fill:#000000;fill-opacity:1;stroke-width:2.8843;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:0;paint-order:fill markers stroke"
+       id="rect4-3"
+       width="63.287361"
+       height="14.207367"
+       x="40"
+       y="120"
+       ry="5.2704749" />
+    <rect
+       style="fill:#000000;fill-opacity:1;stroke-width:2.8843;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:0;paint-order:fill markers stroke"
+       id="rect4-1"
+       width="63.287361"
+       height="14.207367"
+       x="40"
+       y="150"
+       ry="5.2704749" />
   </g>
 </svg>
 """

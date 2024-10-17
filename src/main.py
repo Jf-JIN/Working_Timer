@@ -1,7 +1,7 @@
 
 
 from PyQt5.QtWidgets import QApplication, QMainWindow,  QTreeWidgetItem, QMessageBox, QInputDialog
-from PyQt5.QtCore import QTimer, QModelIndex
+from PyQt5.QtCore import QTimer, QModelIndex, QEvent
 from PyQt5.QtGui import QColor
 
 from Main_Window_ui import *
@@ -22,7 +22,7 @@ APP_FOLDER_PATH = os.getcwd()
 # APP_FOLDER_PATH = os.path.dirname(os.path.abspath(__file__))
 DATA_FILE_PATH = os.path.join(APP_FOLDER_PATH, '.WorkingTimer_(Dont_Delete)')
 
-
+PLACEHOLDER_TEXT = '请在此输入工作内容\n\n内容将显示在鼠标悬停于右边项目上时的提示框中,\n点击项目将显示于此处'
 HEADER = ['次数', '开始时间', '结束时间', '单次计时', '周计时', '月计时', '年计时']
 
 COLOR_YEAR_LIST = ['#F0A8D0', '#6482AD']
@@ -42,15 +42,18 @@ class ExcelExportor(object):
             worksheet.set_column(6, 6, 25)
             worksheet.set_column(7, 7, 100)
             worksheet.write_row(0, 0, HEADER, self.dict_color['header'])
-            worksheet.write(0, len(HEADER), '内容/备注', self.dict_color['header'])
+            worksheet.write(0, len(HEADER), '内容/备注', self.dict_color['header_content'])
             self.__write_single_sheet(item, worksheet=worksheet)
         self.workbook.close()
 
     def __init__(self, excel_path):
         super().__init__()
         self.workbook = Workbook(excel_path)
-        self.dict_color = {'header': self.workbook.add_format({'bg_color': '#5983b0', 'border': 1, 'font_name': 'Arial', 'font_size': 12, 'align': 'center', 'text_wrap': True}),
-                           **{i: self.workbook.add_format({'bg_color': i, 'border': 1, 'font_name': 'Arial', 'font_size': 12})for i in COLOR_EXCEL_LIST}}
+        self.dict_color = {
+            'header': self.workbook.add_format({'bg_color': '#5983b0', 'border': 1, 'font_name': 'Arial', 'font_size': 12, 'text_wrap': True, 'align': 'center'}),
+            'header_content': self.workbook.add_format({'bg_color': '#5983b0', 'border': 1, 'font_name': 'Arial', 'font_size': 12, 'text_wrap': True, 'align': 'left'}),
+            **{i: self.workbook.add_format({'bg_color': i, 'border': 1, 'font_name': 'Arial', 'font_size': 12, 'text_wrap': True, 'align': 'center'})for i in COLOR_EXCEL_LIST}}
+        self.dict_color_content = {i: self.workbook.add_format({'bg_color': i, 'border': 1, 'font_name': 'Arial', 'font_size': 12, 'text_wrap': True, 'align': 'left'})for i in COLOR_MONTH_LIST}
 
     def __format_yeartime(self, year_num, time_str):
         date_str, time_str = time_str.split(' | ')
@@ -81,7 +84,7 @@ class ExcelExportor(object):
             row = int(index_str)
             worksheet.write(row, 0, index_str, self.dict_color[value['color_month']])
             worksheet.write(row, 1, self.__format_datetime(value['start_time'][0]), self.dict_color[value['color_month']])
-            worksheet.write(row, 7, value['content'], self.dict_color[value['color_month']])
+            worksheet.write(row, 7, value['content'], self.dict_color_content[value['color_month']])
             if 'end_time' in value:
                 worksheet.write(row, 2, self.__format_datetime(value['end_time'][0]), self.dict_color[value['color_month']])
                 worksheet.write(row, 3, self.__format_time(value['work_time'][0]), self.dict_color[value['color_month']])
@@ -117,10 +120,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.treeWidget.setContextMenuPolicy(Qt.CustomContextMenu)
         self.comboBox.view().setContextMenuPolicy(Qt.CustomContextMenu)
         self.comboBox.view().viewport().installEventFilter(self)
+        self.treeWidget.installEventFilter(self)
 
     def init_ui(self) -> None:
-        # self.setWindowIcon(self.icon_setup_from_svg(WIN_ICON))
+        # self.setWindowIcon(self.icon_setup_from_svg(ICON_WIN))
         self.setWindowTitle('Working Timer')
+        if DETAIL_DATE_TIME:
+            self.setWindowTitle(f'Working Timer\t {APP_FOLDER_PATH}')
         self.setStyleSheet("""
                             QWidget[objectName="centralwidget"]{
                                 background-color: #10375C;
@@ -137,6 +143,37 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                             }
                             QPushButton[objectName="pb_add_manual"], QPushButton[objectName="pb_export"]{
                                 font:16px '黑体';
+                            }
+                            QPushButton[objectName="pb_start"]{
+                                font: 20px "幼圆";
+                                font-weight:bold;
+                                background-color: #3cc800;
+                                color: #000000;
+                                border: None;
+                                border-radius:10px
+                            }
+                            QPushButton[objectName="pb_start"]:hover{
+                                padding-bottom: 5px;
+                                background-color: #3caa4b;
+                            }
+                            QPushButton[objectName="pb_end"]{
+                                font: 20px "幼圆";
+                                font-weight:bold;
+                                background-color: #ee2d00;
+                                color: #FFFFFF;
+                                border: None;
+                                border-radius:10px
+                            }
+                            QPushButton[objectName="pb_end"]:hover{
+                                padding-bottom: 5px;
+                                background-color: #aa1e1e;
+                            }
+                            QPlainTextEdit{
+                                font: 20px "幼圆";
+                                padding: 10px;
+                                background-color: #b0f1ff;
+                                border: None;
+                                border-radius:10px
                             }
                             QTreeWidget{
                                 background-color: #DDDDDD;
@@ -172,31 +209,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.treeWidget.setColumnWidth(0, 50)
         self.treeWidget.setColumnWidth(1, 170)
         self.treeWidget.setColumnWidth(2, 170)
-        self.plainTextEdit.setPlaceholderText('请在此输入工作内容\n\n内容将显示在鼠标悬停于右边项目上时的提示框中')
-        self.plainTextEdit.setStyleSheet("""
-                                         font: 20px "幼圆";
-                                         padding: 10px;
-                                         background-color: #b0f1ff;
-                                         border: None;
-                                         border-radius:10px
-                                         """)
-        self.pb_start.setStyleSheet("""
-                                    font: 20px "幼圆";
-                                    font-weight:bold;
-                                    background-color: #3cc800;
-                                    color: #000000;
-                                    border: None;
-                                    border-radius:10px
-                                    """)
-        self.pb_end.setStyleSheet("""
-                                  font: 20px "幼圆";
-                                  font-weight:bold;
-                                  background-color: #ee2d00;
-                                  color: #FFFFFF;
-                                  border: None;
-                                  border-radius:10px
-                                  """)
-        self.pb_add_item.setIcon(self.icon_setup_from_svg(ADD_ICON))
+        self.plainTextEdit.setPlaceholderText(PLACEHOLDER_TEXT)
+        self.pb_add_item.setIcon(self.icon_setup_from_svg(ICON_ADD))
+        self.pb_update.setIcon(self.icon_setup_from_svg(ICON_UPDATE))
+        self.pb_copy.setIcon(self.icon_setup_from_svg(ICON_COPY))
+        self.pb_copy.setToolTip("复制占位提示内容至输入框中")
+        self.pb_clear.setIcon(self.icon_setup_from_svg(ICON_DELETE))
+        self.pb_clear.setToolTip("清空输入框内容")
         self.pb_start.setCursor(Qt.PointingHandCursor)
         self.pb_end.setCursor(Qt.PointingHandCursor)
         self.pb_add_manual.setCursor(Qt.PointingHandCursor)
@@ -211,9 +230,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.pb_add_manual.clicked.connect(self.dialog_manual_add_time)
         self.pb_add_item.clicked.connect(self.add_new_item_from_dialog)
         self.pb_export.clicked.connect(self.export_excel)
+        self.pb_update.clicked.connect(self.update_all_data)
+        self.pb_copy.clicked.connect(self.copy_text_to_plainTextEdit)
+        self.pb_clear.clicked.connect(self.clear_plainTextEdit)
         self.comboBox.currentIndexChanged.connect(self.display_data)
         self.comboBox.view().customContextMenuRequested.connect(self.show_combobox_context_menu)
         self.treeWidget.customContextMenuRequested.connect(self.show_treewidget_context_menu)
+        self.treeWidget.currentItemChanged.connect(self.display_content_in_plainTextEdit)
 
     def init_data(self) -> None:
         if not os.path.exists(DATA_FILE_PATH):
@@ -233,6 +256,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 if index != -1:
                     self.show_combobox_context_menu(event.pos())
                     return True
+        if source == self.treeWidget:
+            if event.type() == QEvent.FocusIn and self.treeWidget.currentItem():
+                self.display_content_in_plainTextEdit()
+            elif event.type() == QEvent.FocusOut and QApplication.focusWidget() != self.pb_copy:
+                self.plainTextEdit.setPlaceholderText(PLACEHOLDER_TEXT)
         return super().eventFilter(source, event)
 
     def dialog_manual_add_time(self) -> None:
@@ -307,9 +335,15 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.pb_start.hide()
             self.pb_end.hide()
             self.pb_export.hide()
+            self.pb_update.hide()
+            self.pb_copy.hide()
+            self.pb_clear.hide()
             return
         else:
             self.pb_export.show()
+            self.pb_update.show()
+            self.pb_copy.show()
+            self.pb_clear.show()
             self.plainTextEdit.setEnabled(True)
             self.plainTextEdit.clear()
             self.display_data_in_treewiget(self.data[self.ccb_item_name]['data'])
@@ -359,6 +393,23 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             item.setBackground(4, QColor(value['color_week']))
             item.setBackground(6, QColor(value['color_year']))
             self.treeWidget.addTopLevelItem(item)
+
+    def display_content_in_plainTextEdit(self) -> None:
+        """在plainTextEdit中显示内容的方法. """
+        if self.treeWidget.currentItem():
+            text = self.treeWidget.currentItem().toolTip(0)
+            self.plainTextEdit.setPlaceholderText(text)
+
+    def copy_text_to_plainTextEdit(self) -> None:
+        text = self.plainTextEdit.placeholderText()
+        print(text)
+        if text == PLACEHOLDER_TEXT:
+            return
+        self.plainTextEdit.setPlainText(text)
+
+    def clear_plainTextEdit(self) -> None:
+        self.plainTextEdit.clear()
+        self.plainTextEdit.setPlaceholderText(PLACEHOLDER_TEXT)
 
     def update_time(self) -> None:
         """
@@ -536,9 +587,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.data[ccb_item_name]['data'][index]['end_time'] = [end_time, end_timestamp]
         self.data[ccb_item_name]['data'][index]['work_time'] = [f'{work_time_h}h {work_time_min}min {work_time_s}s', work_time_in_s]
         self.data[ccb_item_name]['status'] = 'end'
-        self.calculation_work_time(ccb_item_name, index, 'week', 'sum_work_time_week')
-        self.calculation_work_time(ccb_item_name, index, 'month', 'sum_work_time_month')
-        self.calculation_work_time(ccb_item_name, index, 'year', 'sum_work_time_year')
+        self.calculation_work_time(self.data[ccb_item_name]['data'], index, 'week', 'sum_work_time_week')
+        self.calculation_work_time(self.data[ccb_item_name]['data'], index, 'month', 'sum_work_time_month')
+        self.calculation_work_time(self.data[ccb_item_name]['data'], index, 'year', 'sum_work_time_year')
 
     def record_end_time_auto(self) -> None:
         """
@@ -598,14 +649,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         work_time_s: int = work_time_in_s % 3600 % 60 % 60
         return work_time_h, work_time_min, work_time_s, work_time_in_s
 
-    def calculation_work_time(self, ccb_item_name: str, index: str, time_circle: str, dict_label: str) -> None:
+    def calculation_work_time(self, dict_data: dict, index: str, time_circle: str, dict_label: str) -> None:
         """
         用于计算给定数据项的累计时间
 
         参数:
         - ccb_item_name (str): 数据项的名称.
         - index (str): 数据项的索引.
-        - time_circle(str): 时间循环的名称. 
+        - time_circle(str): 时间循环的名称.
             - year
             - month
             - week
@@ -616,19 +667,19 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         返回:
             无返回值, 但会修改self.data[ccb_item_name]['data'][index][dict_label]的值.
         """
-        if len(self.data[ccb_item_name]['data']) < 1:
+        if len(dict_data) < 1:
             return
-        if index == '0' or len(self.data[ccb_item_name]['data']) == 1 or self.data[ccb_item_name]['data'][str(int(index)-1)][time_circle] != self.data[ccb_item_name]['data'][index][time_circle]:
-            self.data[ccb_item_name]['data'][index][dict_label] = self.data[ccb_item_name]['data'][index]['work_time']
+        if index == '0' or len(dict_data) == 1 or dict_data[str(int(index)-1)][time_circle] != dict_data[index][time_circle]:
+            dict_data[index][dict_label] = dict_data[index]['work_time']
             if time_circle == 'year':
-                sum_seconds = self.data[ccb_item_name]['data'][index]['work_time'][1]
-                self.data[ccb_item_name]['data'][index][dict_label] = [f'{sum_seconds//(3600*24)}D | {sum_seconds//3600}h {sum_seconds%3600//60}min {sum_seconds%3600%60%60}s', sum_seconds]
+                sum_seconds = dict_data[index]['work_time'][1]
+                dict_data[index][dict_label] = [f'{sum_seconds//(3600*24)}D | {sum_seconds//3600}h {sum_seconds%3600//60}min {sum_seconds%3600%60%60}s', sum_seconds]
             return
-        last_total_time = self.data[ccb_item_name]['data'][str(int(index)-1)][dict_label][1]
-        sum_seconds = self.data[ccb_item_name]['data'][index]['work_time'][1] + last_total_time
-        self.data[ccb_item_name]['data'][index][dict_label] = [f'{sum_seconds//3600}h {sum_seconds%3600//60}min {sum_seconds%3600%60%60}s', sum_seconds]
+        last_total_time = dict_data[str(int(index)-1)][dict_label][1]
+        sum_seconds = dict_data[index]['work_time'][1] + last_total_time
+        dict_data[index][dict_label] = [f'{sum_seconds//3600}h {sum_seconds%3600//60}min {sum_seconds%3600%60%60}s', sum_seconds]
         if time_circle == 'year':
-            self.data[ccb_item_name]['data'][index][dict_label] = [f'{sum_seconds//(3600*24)}D | {sum_seconds//3600}h {sum_seconds%3600//60}min {sum_seconds%3600%60%60}s', sum_seconds]
+            dict_data[index][dict_label] = [f'{sum_seconds//(3600*24)}D | {sum_seconds//3600}h {sum_seconds%3600//60}min {sum_seconds%3600%60%60}s', sum_seconds]
 
     def icon_setup_from_svg(self, icon_code: str) -> QIcon:
         '''
@@ -669,7 +720,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             return
         menu = QMenu(self)
         action_del = QAction(f'删除 第{index.row() + 1}行', self)
-        action_del.setIcon(self.icon_setup_from_svg(DELETE_ICON))
+        action_del.setIcon(self.icon_setup_from_svg(ICON_DELETE))
         menu.addAction(action_del)
         action_del.triggered.connect(lambda: self.delete_treewidget_item(index))
         menu.exec_(self.treeWidget.mapToGlobal(pos))
@@ -682,15 +733,30 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             if ans2 == QMessageBox.Yes:
                 item_name = self.treeWidget.currentItem().text(0)
                 del self.data[self.comboBox.currentText()]['data'][item_name]
-                self.change_data_key(self.data[self.comboBox.currentText()]['data'])
+                self.update_partial_data(self.data[self.comboBox.currentText()]['data'])
                 self.treeWidget.takeTopLevelItem(index.row())
                 self.write_data()
                 self.display_data()
 
-    def change_data_key(self, data: dict):
-        temp = {str(i + 1): value for i, value in enumerate(data.values())}
-        data.clear()
-        data.update(temp)
+    def update_partial_data(self, dict_data: dict, start_from=1):
+        # temp = {str(i + 1): value for i, value in enumerate(dict_data.values())}
+        temp = {}
+        for i, value in enumerate(dict_data.values()):
+            index_int = i + 1
+            index_str = str(index_int)
+            temp[index_str] = value
+            if index_int >= start_from and 'end_time' in value:
+                self.calculation_work_time(temp, index_str, 'week', 'sum_work_time_week')
+                self.calculation_work_time(temp, index_str, 'month', 'sum_work_time_month')
+                self.calculation_work_time(temp, index_str, 'year', 'sum_work_time_year')
+        dict_data.clear()
+        dict_data.update(temp)
+
+    def update_all_data(self):
+        for i in self.data.values():
+            self.update_partial_data(i['data'])
+        self.write_data()
+        self.display_data()
 
     def show_combobox_context_menu(self, pos: QPoint) -> None:
         """
@@ -706,7 +772,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         if index != -1:
             menu = QMenu(self)
             action_del = QAction(f'删除 {self.comboBox.itemText(index)}', self)
-            action_del.setIcon(self.icon_setup_from_svg(DELETE_ICON))
+            action_del.setIcon(self.icon_setup_from_svg(ICON_DELETE))
             menu.addAction(action_del)
             action_del.triggered.connect(lambda: self.delete_combobox_item(index))
             menu.exec_(self.comboBox.view().mapToGlobal(pos))
@@ -800,7 +866,7 @@ if __name__ == '__main__':
     try:
         app = QApplication(sys.argv)
         window = MainWindow()
-        app.setWindowIcon(window.icon_setup_from_svg(WIN_ICON))
+        app.setWindowIcon(window.icon_setup_from_svg(ICON_WIN))
         window.show()
         sys.exit(app.exec_())
     except Exception as e:

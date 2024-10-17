@@ -18,6 +18,8 @@ DATA_PART_DEFAULT = {
 DATA_INNER_DEFAULT = {
     'start_time': ''
 }
+DETAIL_DATE_TIME = True
+# DETAIL_DATE_TIME = False
 
 
 class DialogManual(QDialog, Ui_Dialog):
@@ -89,14 +91,17 @@ class DialogManual(QDialog, Ui_Dialog):
 
     def init_ui(self):
         self.setWindowTitle('手动添加工作时间记录')
-        # self.setWindowIcon(self.icon_setup_from_svg(WIN_ICON))
+        # self.setWindowIcon(self.icon_setup_from_svg(ICON_WIN))
         self.comboBox.view().setContextMenuPolicy(Qt.CustomContextMenu)
         self.comboBox.view().viewport().installEventFilter(self)
         self.comboBox.view().customContextMenuRequested.connect(self.show_context_menu)
         self.plainTextEdit.setPlaceholderText('请在此输入工作内容')
-        self.pb_add_item.setIcon(self.icon_setup_from_svg(ADD_ICON))
+        self.pb_add_item.setIcon(self.icon_setup_from_svg(ICON_ADD))
         self.dte_start.setDateTime(QDateTime.currentDateTime())
         self.dte_end.setMinimumDateTime(QDateTime.currentDateTime().addSecs(60))
+        if DETAIL_DATE_TIME:
+            self.dte_start.setDisplayFormat("yyyy-MM-dd HH:mm:ss.zzz")
+            self.dte_end.setDisplayFormat("yyyy-MM-dd HH:mm:ss.zzz")
         self.setStyleSheet("""
                            QDialog{
                                background-color: #10375C
@@ -138,6 +143,9 @@ class DialogManual(QDialog, Ui_Dialog):
         start_timestamp = self.dte_start.dateTime().toSecsSinceEpoch()
         end_time = self.dte_end.dateTime().toString('yyyy.MM.dd | hh:mm:ss.000')
         end_timestamp = self.dte_end.dateTime().toSecsSinceEpoch()
+        if DETAIL_DATE_TIME:
+            start_time = self.dte_start.dateTime().toString('yyyy.MM.dd | hh:mm:ss.zzz')
+            end_time = self.dte_end.dateTime().toString('yyyy.MM.dd | hh:mm:ss.zzz')
         work_content = self.plainTextEdit.toPlainText()
         start_year, start_month, start_week = self.get_montn_week(start_timestamp)
         if self.comboBox.currentText() not in self.inner_data:
@@ -157,7 +165,7 @@ class DialogManual(QDialog, Ui_Dialog):
         if index != -1:
             menu = QMenu(self)
             action_del = QAction(f'删除 {self.comboBox.itemText(index)}', self)
-            action_del.setIcon(self.icon_setup_from_svg(DELETE_ICON))
+            action_del.setIcon(self.icon_setup_from_svg(ICON_DELETE))
             menu.addAction(action_del)
             action_del.triggered.connect(lambda: self.delete_item(index))
             menu.exec_(self.comboBox.view().mapToGlobal(pos))
